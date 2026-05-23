@@ -1,0 +1,36 @@
+package kr.magicbox.creator.adapter.out.communication.grpc;
+
+import io.grpc.ManagedChannel;
+import kr.magicbox.creator.adapter.out.communication.ServiceHost;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.grpc.client.GrpcChannelFactory;
+
+@Configuration
+public class GrpcConfiguration {
+
+    @Bean
+    public ManagedChannel reviewManagedChannel(GrpcChannelFactory grpcChannelFactory) {
+        return grpcChannelFactory.createChannel(ServiceHost.REVIEW.getHostName());
+    }
+
+    @Bean
+    public ManagedChannel subscribeManagedChannel(GrpcChannelFactory grpcChannelFactory) {
+        return grpcChannelFactory.createChannel(ServiceHost.SUBSCRIBE.getHostName());
+    }
+
+    @Bean
+    public ManagedChannel releaseManagedChannel(GrpcChannelFactory grpcChannelFactory) {
+        return grpcChannelFactory.createChannel(ServiceHost.RELEASE.getHostName());
+    }
+
+    @Bean
+    public ManagedChannel userManagedChannel(GrpcChannelFactory grpcChannelFactory) {
+        return grpcChannelFactory.createChannel(ServiceHost.USER.getHostName());
+    }
+
+    @Bean
+    public ManagedChannel shortformManagedChannel(GrpcChannelFactory grpcChannelFactory) {
+        return grpcChannelFactory.createChannel(ServiceHost.SHORTFORM.getHostName());
+    }
+}

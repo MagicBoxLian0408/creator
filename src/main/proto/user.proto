@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package magicbox.user.v1;
+
+option java_package = "kr.magicbox.creator.grpc.user";
+option java_outer_classname = "UserServiceProto";
+option java_multiple_files = true;
+
+service UserService {
+  rpc GetUserNickname(GetUserNicknameRequest) returns (GetUserNicknameResponse);
+}
+
+message GetUserNicknameRequest {
+  int64 user_id = 1;
+}
+
+message GetUserNicknameResponse {
+  string nickname = 1;
+}

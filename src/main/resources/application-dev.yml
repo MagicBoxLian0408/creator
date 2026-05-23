@@ -1,0 +1,71 @@
+spring:
+  application:
+    name: creator-dev
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+  grpc:
+    server:
+      port: ${GRPC_SERVER_PORT}
+    client:
+      channels:
+        user:
+          address: ${USER_SERVICE_URL}
+          negotiation-type: plaintext
+          keep-alive-time: 30s
+          keep-alive-timeout: 5s
+        subscribe:
+          address: ${SUBSCRIBE_SERVICE_URL}
+          negotiation-type: plaintext
+          keep-alive-time: 30s
+          keep-alive-timeout: 5s
+        review:
+          address: ${REVIEW_SERVICE_URL}
+          negotiation-type: plaintext
+          keep-alive-time: 30s
+          keep-alive-timeout: 5s
+        shortform:
+          address: ${SHORTFORM_SERVICE_URL}
+          negotiation-type: plaintext
+          keep-alive-time: 30s
+          keep-alive-timeout: 5s
+        release:
+          address: ${RELEASE_SERVICE_URL}
+          negotiation-type: plaintext
+          keep-alive-time: 30s
+          keep-alive-timeout: 5s
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+    listener:
+      ack-mode: record
+      missing-topics-fatal: false
+    consumer:
+      group-id: creator-service
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      properties:
+        spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JacksonJsonDeserializer
+        spring.json.trusted.packages: "kr.magicbox.creator.adapter.in.kafka.event"
+        spring.json.type.mapping: user-withdrawn:kr.magicbox.creator.adapter.in.kafka.event.UserWithdrawnEvent,user-banned:kr.magicbox.creator.adapter.in.kafka.event.UserBannedEvent
+    retry:
+      topic:
+        backoff:
+          multiplier: 2
+          delay: 1s
+        attempts: 5
+  datasource:
+    url: ${MYSQL_URL}
+    username: ${MYSQL_USERNAME}
+    password: ${MYSQL_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+security:
+  trusted:
+    ips:
+      - ${TRUSTED_IP_GATEWAY}
+
+inbox:
+  max-event-age-minutes: 5

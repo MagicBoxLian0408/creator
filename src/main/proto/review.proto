@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package magicbox.review.v1;
+
+option java_package = "kr.magicbox.creator.grpc.review";
+option java_outer_classname = "ReviewServiceProto";
+option java_multiple_files = true;
+
+service ReviewService {
+  rpc GetReviewRating(GetReviewRatingRequest) returns (GetReviewRatingResponse);
+}
+
+message GetReviewRatingRequest {
+  int64 creator_id = 1;
+}
+
+message GetReviewRatingResponse {
+  double rating = 1;
+}

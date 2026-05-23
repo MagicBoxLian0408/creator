@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package magicbox.creator.v1;
+
+option java_package = "kr.magicbox.creator.grpc.creator";
+option java_outer_classname = "CreatorServiceProto";
+option java_multiple_files = true;
+
+service CreatorService {
+  rpc IsCreatorOwnedByUser(IsCreatorOwnedByUserRequest)
+      returns (IsCreatorOwnedByUserResponse);
+  rpc GetCreatorIdByUserId(GetCreatorIdByUserIdRequest)
+      returns (GetCreatorIdByUserIdResponse);
+}
+
+message IsCreatorOwnedByUserRequest {
+  int64 creator_id = 1;
+  int64 user_id = 2;
+}
+
+message IsCreatorOwnedByUserResponse {
+  bool owned_by_user = 1;
+}
+
+message GetCreatorIdByUserIdRequest {
+  int64 user_id = 1;
+}
+
+message GetCreatorIdByUserIdResponse {
+  int64 creator_id = 1;
+}

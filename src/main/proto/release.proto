@@ -1,0 +1,57 @@
+syntax = "proto3";
+
+package magicbox.release.v1;
+
+option java_package = "kr.magicbox.creator.grpc.release";
+option java_outer_classname = "ReleaseServiceProto";
+option java_multiple_files = true;
+
+import "google/protobuf/timestamp.proto";
+
+service ReleaseService {
+  rpc GetReleaseCount(GetReleaseCountRequest) returns (GetReleaseCountResponse);
+  rpc GetReleasesByCreatorId(GetReleasesByCreatorIdRequest) returns (GetReleasesByCreatorIdResponse);
+}
+
+message GetReleaseCountRequest {
+  int64 creator_id = 1;
+}
+
+message GetReleaseCountResponse {
+  int64 release_count = 1;
+}
+
+message GetReleasesByCreatorIdRequest {
+  int64 creator_id = 1;
+}
+
+message GetReleasesByCreatorIdResponse {
+  repeated Release releases = 1;
+}
+
+enum ReleaseLevel {
+  BEGINNER = 0;
+  INTERMEDIATE = 1;
+  ADVANCED = 2;
+}
+
+enum ReleaseStatus {
+  SCHEDULED = 0;
+  ON_SALE = 1;
+  SOLD_OUT = 2;
+  ENDED = 3;
+}
+
+message Release {
+  int64 release_id = 1;
+  string title = 2;
+  string thumbnail_url = 3;
+  ReleaseLevel level = 4;
+  string creator_nickname = 5;
+  int64 price = 6;
+  google.protobuf.Timestamp created_at = 7;
+  google.protobuf.Timestamp scheduled_at = 8;
+  ReleaseStatus status = 9;
+  int32 limited_quantity = 10;
+  int32 sold_quantity = 11;
+}
