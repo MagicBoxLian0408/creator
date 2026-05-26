@@ -19,7 +19,7 @@ public class SearchCreatorsService implements SearchCreatorsUseCase {
     @Transactional(readOnly = true)
     @Override
     public List<CreatorSearchResult> searchCreators(SearchCreatorsQuery query) {
-        return creatorRepositoryPort.searchByNickname(query.keyword(), query.cursorId(), query.size())
+        return creatorRepositoryPort.searchByNickname(query.keyword(), query.cursorId(), query.size() + 1)
                 .stream()
                 .map(CreatorSearchResult::from)
                 .toList();

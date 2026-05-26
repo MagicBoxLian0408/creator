@@ -85,7 +85,7 @@ public class CreatorQueryController {
     public ResponseEntity<CursorResponse<CreatorSearchResponse>> getAllCreators(
             @RequestParam(required = false) Long cursor,
             @RequestParam(defaultValue = CursorConstants.DEFAULT_SIZE) @CursorSize Integer size) {
-        List<CreatorSearchResponse> contents = getAllCreatorsUseCase.getAllCreators(GetAllCreatorsQuery.of(cursor, size + 1))
+        List<CreatorSearchResponse> contents = getAllCreatorsUseCase.getAllCreators(GetAllCreatorsQuery.of(cursor, size))
                 .stream()
                 .map(content ->
                         CreatorSearchResponse.builder()
@@ -105,7 +105,7 @@ public class CreatorQueryController {
             @RequestParam @NotBlank(message = "닉네임은 필수입니다.") String nickname,
             @RequestParam(required = false) Long cursor,
             @RequestParam(defaultValue = CursorConstants.DEFAULT_SIZE) @CursorSize Integer size) {
-        List<CreatorSearchResponse> contents = searchCreatorsUseCase.searchCreators(SearchCreatorsQuery.of(nickname, cursor, size + 1))
+        List<CreatorSearchResponse> contents = searchCreatorsUseCase.searchCreators(SearchCreatorsQuery.of(nickname, cursor, size))
                 .stream()
                 .map(content ->
                         CreatorSearchResponse.builder()
