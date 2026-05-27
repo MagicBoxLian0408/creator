@@ -4,11 +4,13 @@ import kr.magicbox.creator.application.dto.result.ReleaseLevel;
 import kr.magicbox.creator.application.dto.result.ReleaseResult;
 import lombok.Builder;
 
+import java.util.List;
+
 @Builder
 public record ReleaseResponse(
         Long releaseId,
         String title,
-        String thumbnailUrl,
+        List<String> mediaUrls,
         ReleaseLevel level,
         String creatorNickname,
         long price,
@@ -19,7 +21,7 @@ public record ReleaseResponse(
         return ReleaseResponse.builder()
                 .releaseId(result.releaseId().value())
                 .title(result.title())
-                .thumbnailUrl(result.thumbnailUrl())
+                .mediaUrls(result.mediaUrls())
                 .level(result.level())
                 .creatorNickname(result.creatorNickname())
                 .price(result.price())
