@@ -63,7 +63,7 @@ public class ReleaseQueryGrpcAdapter implements ReleaseQueryPort {
                 .map(release -> ReleaseResult.builder()
                         .releaseId(ReleaseId.of(release.getReleaseId()))
                         .title(release.getTitle())
-                        .thumbnailUrl(release.getThumbnailUrl())
+                        .mediaUrls(release.getMediaUrlsList())
                         .level(ReleaseLevel.valueOf(release.getLevel().name()))
                         .creatorNickname(release.getCreatorNickname())
                         .price(release.getPrice())

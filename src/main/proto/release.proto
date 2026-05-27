@@ -45,7 +45,7 @@ enum ReleaseStatus {
 message Release {
   int64 release_id = 1;
   string title = 2;
-  string thumbnail_url = 3;
+  repeated string media_urls = 3;
   ReleaseLevel level = 4;
   string creator_nickname = 5;
   int64 price = 6;
