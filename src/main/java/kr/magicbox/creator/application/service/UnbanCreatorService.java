@@ -30,6 +30,7 @@ public class UnbanCreatorService implements UnbanCreatorUseCase {
         creatorRepositoryPort.update(creator);
 
         CreatorUnbannedEvent event = CreatorUnbannedEvent.builder()
+                .eventId(creator.getId().value())
                 .creatorId(creator.getId())
                 .occurredAt(Instant.now())
                 .build();

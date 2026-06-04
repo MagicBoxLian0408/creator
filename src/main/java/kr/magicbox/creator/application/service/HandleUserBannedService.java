@@ -35,6 +35,7 @@ public class HandleUserBannedService implements HandleUserBannedUseCase {
         creatorRepositoryPort.update(creator);
         eventRepositoryPort.save(
                 CreatorRevokedEvent.builder()
+                        .eventId(creator.getId().value())
                         .creatorId(creator.getId())
                         .occurredAt(Instant.now())
                         .build()

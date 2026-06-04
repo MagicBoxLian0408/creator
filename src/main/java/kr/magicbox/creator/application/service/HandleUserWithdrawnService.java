@@ -30,6 +30,7 @@ public class HandleUserWithdrawnService implements HandleUserWithdrawnUseCase {
         creatorRepositoryPort.update(creator);
         creatorOutboxRepositoryPort.save(
                 CreatorRevokedEvent.builder()
+                        .eventId(creator.getId().value())
                         .creatorId(creator.getId())
                         .occurredAt(Instant.now())
                         .build()

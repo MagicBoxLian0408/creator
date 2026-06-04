@@ -47,6 +47,7 @@ public class ReviewCreatorCertificationService implements ReviewCreatorCertifica
 
     private CreatorCertificationApprovedEvent buildApprovedEvent(CreatorCertification certification) {
         return CreatorCertificationApprovedEvent.builder()
+                .eventId(certification.getUserId().value())
                 .userId(certification.getUserId())
                 .certificationId(certification.getId())
                 .occurredAt(certification.getResult().reviewedAt())
@@ -55,6 +56,7 @@ public class ReviewCreatorCertificationService implements ReviewCreatorCertifica
 
     private CreatorCertificationRejectedEvent buildRejectedEvent(CreatorCertification certification) {
         return CreatorCertificationRejectedEvent.builder()
+                .eventId(certification.getUserId().value())
                 .userId(certification.getUserId())
                 .certificationId(certification.getId())
                 .reviewMessage(certification.getResult().reviewMessage())

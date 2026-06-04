@@ -30,6 +30,7 @@ public class BanCreatorService implements BanCreatorUseCase {
         creatorRepositoryPort.update(creator);
         eventRepositoryPort.save(
                 CreatorRevokedEvent.builder()
+                        .eventId(creator.getId().value())
                         .creatorId(creator.getId())
                         .occurredAt(Instant.now())
                         .build()

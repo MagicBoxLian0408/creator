@@ -50,6 +50,7 @@ public class UpdateCreatorProfileService implements UpdateCreatorProfileUseCase 
         );
 
         creatorOutboxRepositoryPort.save(CreatorProfileUpdatedEvent.builder()
+                .eventId(creator.getId().value())
                 .creatorId(creator.getId())
                 .before(before)
                 .after(after)
