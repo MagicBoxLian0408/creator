@@ -9,6 +9,7 @@ import java.time.Instant;
 
 @Builder
 public record CreatorCertificationApprovedEvent(
+        @JsonProperty("event_id") Long eventId,
         @JsonProperty("user_id") UserId userId,
         @JsonProperty("certification_id") CreatorCertificationId certificationId,
         @JsonProperty("occurred_at") Instant occurredAt

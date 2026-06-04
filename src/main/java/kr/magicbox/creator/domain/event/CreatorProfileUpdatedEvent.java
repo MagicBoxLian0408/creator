@@ -8,6 +8,7 @@ import java.time.Instant;
 
 @Builder
 public record CreatorProfileUpdatedEvent(
+        @JsonProperty("event_id") Long eventId,
         @JsonProperty("creator_id") CreatorId creatorId,
         @JsonProperty("before") ProfileSnapshot before,
         @JsonProperty("after") ProfileSnapshot after,

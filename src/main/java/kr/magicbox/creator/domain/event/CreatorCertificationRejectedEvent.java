@@ -9,6 +9,7 @@ import java.time.Instant;
 
 @Builder
 public record CreatorCertificationRejectedEvent(
+        @JsonProperty("event_id") Long eventId,
         @JsonProperty("user_id") UserId userId,
         @JsonProperty("certification_id") CreatorCertificationId certificationId,
         @JsonProperty("review_message") String reviewMessage,
