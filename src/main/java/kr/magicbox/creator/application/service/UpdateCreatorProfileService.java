@@ -30,7 +30,9 @@ public class UpdateCreatorProfileService implements UpdateCreatorProfileUseCase 
         ProfileSnapshot before = new ProfileSnapshot(
                 creator.getNicknameValue(),
                 creator.getTagline(),
-                creator.getProfileImageUrl()
+                creator.getProfileImageUrl(),
+                creator.getIntroduction(),
+                creator.getGenres()
         );
 
         creator.updateProfile(
@@ -46,7 +48,9 @@ public class UpdateCreatorProfileService implements UpdateCreatorProfileUseCase 
         ProfileSnapshot after = new ProfileSnapshot(
                 creator.getNicknameValue(),
                 creator.getTagline(),
-                creator.getProfileImageUrl()
+                creator.getProfileImageUrl(),
+                creator.getIntroduction(),
+                creator.getGenres()
         );
 
         creatorOutboxRepositoryPort.save(CreatorProfileUpdatedEvent.builder()
