@@ -37,18 +37,25 @@ public class ReviewCreatorCertificationService implements ReviewCreatorCertifica
         certificationRepositoryPort.update(certification);
 
         if (certification.isApproved()) {
-            createCreator(certification);
-            eventRepositoryPort.save(buildApprovedEvent(certification));
+            Creator creator = createCreator(certification);
+            eventRepositoryPort.save(buildApprovedEvent(certification, creator));
         }
         else {
             eventRepositoryPort.save(buildRejectedEvent(certification));
         }
     }
 
-    private CreatorCertificationApprovedEvent buildApprovedEvent(CreatorCertification certification) {
+    private CreatorCertificationApprovedEvent buildApprovedEvent(CreatorCertification certification, Creator creator) {
         return CreatorCertificationApprovedEvent.builder()
                 .userId(certification.getUserId())
+                .creatorId(creator.getId())
                 .certificationId(certification.getId())
+                .nickname(creator.getNicknameValue())
+                .tagline(creator.getTagline())
+                .profileImageUrl(creator.getProfileImageUrl())
+                .introduction(creator.getIntroduction())
+                .genres(creator.getGenres())
+                .status(creator.getStatus())
                 .occurredAt(certification.getResult().reviewedAt())
                 .build();
     }
@@ -62,7 +69,7 @@ public class ReviewCreatorCertificationService implements ReviewCreatorCertifica
                 .build();
     }
 
-    private void createCreator(CreatorCertification certification) {
+    private Creator createCreator(CreatorCertification certification) {
         if (creatorRepositoryPort.existsByUserId(certification.getUserId())) {
             throw new CreatorAlreadyExistsException();
         }
@@ -75,5 +82,7 @@ public class ReviewCreatorCertificationService implements ReviewCreatorCertifica
                 .build();
 
         creatorRepositoryPort.save(creator);
+        return creatorRepositoryPort.findByUserId(certification.getUserId())
+                .orElseThrow(() -> new IllegalStateException("저장된 크리에이터를 찾을 수 없습니다."));
     }
 }
