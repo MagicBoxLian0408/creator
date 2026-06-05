@@ -81,8 +81,6 @@ public class ReviewCreatorCertificationService implements ReviewCreatorCertifica
                 .genres(certification.getRequest().genres())
                 .build();
 
-        creatorRepositoryPort.save(creator);
-        return creatorRepositoryPort.findByUserId(certification.getUserId())
-                .orElseThrow(() -> new IllegalStateException("저장된 크리에이터를 찾을 수 없습니다."));
+        return creatorRepositoryPort.save(creator);
     }
 }
