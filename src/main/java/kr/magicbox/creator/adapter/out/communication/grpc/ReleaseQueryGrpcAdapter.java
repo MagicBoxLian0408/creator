@@ -2,11 +2,11 @@ package kr.magicbox.creator.adapter.out.communication.grpc;
 
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.grpc.ManagedChannel;
+import kr.magicbox.creator.adapter.out.communication.ServiceHost;
 import kr.magicbox.creator.adapter.out.communication.grpc.exception.ReleaseServiceUnavailableException;
 import kr.magicbox.creator.application.dto.result.ReleaseId;
 import kr.magicbox.creator.application.dto.result.ReleaseLevel;
 import kr.magicbox.creator.application.dto.result.ReleaseResult;
-import kr.magicbox.creator.application.dto.result.ReleaseStatus;
 import kr.magicbox.creator.application.port.out.ReleaseQueryPort;
 import kr.magicbox.creator.grpc.release.GetReleaseCountRequest;
 import kr.magicbox.creator.grpc.release.GetReleaseCountResponse;
@@ -15,22 +15,17 @@ import kr.magicbox.creator.grpc.release.GetReleasesByCreatorIdResponse;
 import kr.magicbox.creator.grpc.release.ReleaseServiceGrpc;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.grpc.client.GrpcChannelFactory;
 import org.springframework.stereotype.Component;
 
-import java.time.Instant;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Component
+@RequiredArgsConstructor
 @Slf4j
 public class ReleaseQueryGrpcAdapter implements ReleaseQueryPort {
-
-    private final ManagedChannel releaseManagedChannel;
-
-    public ReleaseQueryGrpcAdapter(@Qualifier("releaseManagedChannel") ManagedChannel releaseManagedChannel) {
-        this.releaseManagedChannel = releaseManagedChannel;
-    }
+    private final GrpcChannelFactory grpcChannelFactory;
 
     @Override
     @CircuitBreaker(name = "releaseService", fallbackMethod = "getReleaseCountFallback")
@@ -39,8 +34,9 @@ public class ReleaseQueryGrpcAdapter implements ReleaseQueryPort {
                 .setCreatorId(creatorId)
                 .build();
 
+        ManagedChannel channel = grpcChannelFactory.createChannel(ServiceHost.RELEASE.getHostName());
         ReleaseServiceGrpc.ReleaseServiceBlockingStub stub = ReleaseServiceGrpc
-                .newBlockingStub(releaseManagedChannel)
+                .newBlockingStub(channel)
                 .withDeadlineAfter(2, TimeUnit.SECONDS);
         GetReleaseCountResponse response = stub.getReleaseCount(request);
 
@@ -54,8 +50,9 @@ public class ReleaseQueryGrpcAdapter implements ReleaseQueryPort {
                 .setCreatorId(creatorId)
                 .build();
 
+        ManagedChannel channel = grpcChannelFactory.createChannel(ServiceHost.RELEASE.getHostName());
         ReleaseServiceGrpc.ReleaseServiceBlockingStub stub = ReleaseServiceGrpc
-                .newBlockingStub(releaseManagedChannel)
+                .newBlockingStub(channel)
                 .withDeadlineAfter(2, TimeUnit.SECONDS);
         GetReleasesByCreatorIdResponse response = stub.getReleasesByCreatorId(request);
 
@@ -63,15 +60,11 @@ public class ReleaseQueryGrpcAdapter implements ReleaseQueryPort {
                 .map(release -> ReleaseResult.builder()
                         .releaseId(ReleaseId.of(release.getReleaseId()))
                         .title(release.getTitle())
-                        .mediaUrls(release.getMediaUrlsList())
+                        .thumbnailUrl(release.getThumbnailUrl())
                         .level(ReleaseLevel.valueOf(release.getLevel().name()))
                         .creatorNickname(release.getCreatorNickname())
                         .price(release.getPrice())
                         .limitedQuantity(release.getLimitedQuantity())
-                        .soldQuantity(release.getSoldQuantity())
-                        .status(ReleaseStatus.valueOf(release.getStatus().name()))
-                        .scheduledAt(Instant.ofEpochSecond(release.getScheduledAt().getSeconds(), release.getScheduledAt().getNanos()))
-                        .createdAt(Instant.ofEpochSecond(release.getCreatedAt().getSeconds(), release.getCreatedAt().getNanos()))
                         .build())
                 .toList();
     }

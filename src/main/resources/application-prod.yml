@@ -69,4 +69,4 @@ security:
       - ${TRUSTED_IP_GATEWAY}
 
 inbox:
-  max-event-age-minutes: 5
+  max-event-age-minutes: 60
