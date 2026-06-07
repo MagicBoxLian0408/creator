@@ -62,10 +62,6 @@ spring:
     hibernate:
       ddl-auto: update
 
-security:
-  trusted:
-    ips:
-      - ${TRUSTED_IP_GATEWAY}
 
 inbox:
   max-event-age-minutes: 5
