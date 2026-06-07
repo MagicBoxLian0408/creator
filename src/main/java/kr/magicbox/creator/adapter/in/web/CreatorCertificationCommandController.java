@@ -14,7 +14,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/creator/certification")
+@RequestMapping("/certification")
 @RequiredArgsConstructor
 @Validated
 public class CreatorCertificationCommandController {

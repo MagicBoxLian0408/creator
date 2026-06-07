@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/creator/certification")
+@RequestMapping("/certification")
 @RequiredArgsConstructor
 @Validated
 public class CreatorCertificationQueryController {
