@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public interface CreatorRepositoryPort {
 
-    void save(Creator creator);
+    Creator save(Creator creator);
     void update(Creator creator);
 
     Optional<Creator> findById(Long id);

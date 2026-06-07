@@ -23,9 +23,10 @@ public class CreatorJpaAdapter implements CreatorRepositoryPort {
     private final CreatorMapper creatorMapper;
 
     @Override
-    public void save(Creator creator) {
+    public Creator save(Creator creator) {
         CreatorEntity entity = creatorMapper.toEntity(creator);
-        creatorJpaRepository.save(entity);
+        CreatorEntity saved = creatorJpaRepository.save(entity);
+        return creatorMapper.toDomain(saved);
     }
 
     @Override

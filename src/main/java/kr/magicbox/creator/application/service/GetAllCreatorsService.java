@@ -19,7 +19,7 @@ public class GetAllCreatorsService implements GetAllCreatorsUseCase {
     @Transactional(readOnly = true)
     @Override
     public List<CreatorSearchResult> getAllCreators(GetAllCreatorsQuery query) {
-        return creatorRepositoryPort.findAllByCursor(query.cursorId(), query.size() + 1)
+        return creatorRepositoryPort.findAllByCursor(query.cursorId(), query.size())
                 .stream()
                 .map(CreatorSearchResult::from)
                 .toList();

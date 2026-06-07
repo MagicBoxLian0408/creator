@@ -1,10 +1,12 @@
 package kr.magicbox.creator.domain.event;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import kr.magicbox.creator.domain.enums.MagicGenre;
 import kr.magicbox.creator.domain.vo.CreatorId;
 import lombok.Builder;
 
 import java.time.Instant;
+import java.util.Set;
 
 @Builder
 public record CreatorProfileUpdatedEvent(
@@ -17,7 +19,9 @@ public record CreatorProfileUpdatedEvent(
     public record ProfileSnapshot(
             @JsonProperty("nickname") String nickname,
             @JsonProperty("tagline") String tagline,
-            @JsonProperty("profile_image_url") String profileImageUrl
+            @JsonProperty("profile_image_url") String profileImageUrl,
+            @JsonProperty("introduction") String introduction,
+            @JsonProperty("genres") Set<MagicGenre> genres
     ) {}
 
     @Override

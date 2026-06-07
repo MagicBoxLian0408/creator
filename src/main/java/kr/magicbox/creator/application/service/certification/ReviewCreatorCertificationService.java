@@ -37,18 +37,22 @@ public class ReviewCreatorCertificationService implements ReviewCreatorCertifica
         certificationRepositoryPort.update(certification);
 
         if (certification.isApproved()) {
-            createCreator(certification);
-            eventRepositoryPort.save(buildApprovedEvent(certification));
+            Creator creator = createCreator(certification);
+            eventRepositoryPort.save(buildApprovedEvent(certification, creator));
         }
         else {
             eventRepositoryPort.save(buildRejectedEvent(certification));
         }
     }
 
-    private CreatorCertificationApprovedEvent buildApprovedEvent(CreatorCertification certification) {
+    private CreatorCertificationApprovedEvent buildApprovedEvent(CreatorCertification certification, Creator creator) {
         return CreatorCertificationApprovedEvent.builder()
                 .userId(certification.getUserId())
+                .creatorId(creator.getId())
                 .certificationId(certification.getId())
+                .nickname(creator.getNicknameValue())
+                .genres(creator.getGenres())
+                .status(creator.getStatus())
                 .occurredAt(certification.getResult().reviewedAt())
                 .build();
     }
@@ -62,7 +66,7 @@ public class ReviewCreatorCertificationService implements ReviewCreatorCertifica
                 .build();
     }
 
-    private void createCreator(CreatorCertification certification) {
+    private Creator createCreator(CreatorCertification certification) {
         if (creatorRepositoryPort.existsByUserId(certification.getUserId())) {
             throw new CreatorAlreadyExistsException();
         }
@@ -74,6 +78,6 @@ public class ReviewCreatorCertificationService implements ReviewCreatorCertifica
                 .genres(certification.getRequest().genres())
                 .build();
 
-        creatorRepositoryPort.save(creator);
+        return creatorRepositoryPort.save(creator);
     }
 }

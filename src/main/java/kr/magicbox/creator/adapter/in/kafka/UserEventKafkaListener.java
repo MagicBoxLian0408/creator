@@ -26,18 +26,18 @@ public class UserEventKafkaListener {
     private final CreatorInboxRepository creatorInboxRepository;
 
     @Idempotent
-    @RetryableTopic(dltStrategy = DltStrategy.FAIL_ON_ERROR, dltTopicSuffix = "-dlt", exclude = {kr.magicbox.creator.global.exception.BusinessException.class})
+    @RetryableTopic(dltStrategy = DltStrategy.FAIL_ON_ERROR, dltTopicSuffix = "-dlt", exclude = {BusinessException.class})
     @KafkaListener(topics = "outbox.event.user-withdrawn", groupId = "creator-service")
     public void handleUserWithdrawnEvent(ConsumerRecord<String, UserWithdrawnEvent> consumerRecord) {
-        log.info("[Inbox] user-withdrawn 이벤트 수신. eventId={}", consumerRecord.key());
+        log.info("[Inbox] user-withdrawn 이벤트 수신. key={}", consumerRecord.key());
         handleUserWithdrawnUseCase.handleUserWithdrawn(consumerRecord.value().userId());
     }
 
     @Idempotent
-    @RetryableTopic(dltStrategy = DltStrategy.FAIL_ON_ERROR, dltTopicSuffix = "-dlt", exclude = {kr.magicbox.creator.global.exception.BusinessException.class})
+    @RetryableTopic(dltStrategy = DltStrategy.FAIL_ON_ERROR, dltTopicSuffix = "-dlt", exclude = {BusinessException.class})
     @KafkaListener(topics = "outbox.event.user-banned", groupId = "creator-service")
     public void handleUserBannedEvent(ConsumerRecord<String, UserBannedEvent> consumerRecord) {
-        log.info("[Inbox] user-banned 이벤트 수신. eventId={}", consumerRecord.key());
+        log.info("[Inbox] user-banned 이벤트 수신. key={}", consumerRecord.key());
         handleUserBannedUseCase.handleUserBanned(consumerRecord.value().userId());
     }
 

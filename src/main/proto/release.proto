@@ -35,23 +35,13 @@ enum ReleaseLevel {
   ADVANCED = 2;
 }
 
-enum ReleaseStatus {
-  SCHEDULED = 0;
-  ON_SALE = 1;
-  SOLD_OUT = 2;
-  ENDED = 3;
-}
-
 message Release {
   int64 release_id = 1;
   string title = 2;
-  repeated string media_urls = 3;
+  string thumbnail_url = 3;
   ReleaseLevel level = 4;
   string creator_nickname = 5;
   int64 price = 6;
-  google.protobuf.Timestamp created_at = 7;
-  google.protobuf.Timestamp scheduled_at = 8;
-  ReleaseStatus status = 9;
-  int32 limited_quantity = 10;
-  int32 sold_quantity = 11;
+  int32 limited_quantity = 7;
+  google.protobuf.Timestamp created_at = 8;
 }

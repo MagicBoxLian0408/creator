@@ -62,5 +62,6 @@ spring:
     hibernate:
       ddl-auto: update
 
+
 inbox:
   max-event-age-minutes: 5
