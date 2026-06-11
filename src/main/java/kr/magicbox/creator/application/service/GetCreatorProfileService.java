@@ -31,6 +31,7 @@ public class GetCreatorProfileService implements GetCreatorProfileUseCase {
         Long creatorId = creator.getId().value();
 
         return CreatorPublicProfileResult.builder()
+                .creatorId(creatorId)
                 .nickname(creator.getNicknameValue())
                 .tagline(creator.getTagline())
                 .subscriberCount(subscribeQueryPort.getSubscriberCount(creatorId))
