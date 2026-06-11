@@ -17,7 +17,7 @@ public class CreatorOutboxEntity extends BaseEntity {
     @Column(nullable = false)
     private String eventType;
 
-    @Column(name = "`key`", nullable = false)
+    @Column(name = "event_key", nullable = false)
     private String key;
 
     @Column(nullable = false, columnDefinition = "JSON")
