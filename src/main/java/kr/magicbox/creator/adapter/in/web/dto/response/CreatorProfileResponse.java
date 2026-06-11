@@ -1,6 +1,5 @@
 package kr.magicbox.creator.adapter.in.web.dto.response;
 
-import kr.magicbox.creator.application.dto.result.ReviewRating;
 import lombok.Builder;
 
 import java.util.List;
@@ -10,9 +9,10 @@ public record CreatorProfileResponse(
         Long creatorId,
         String nickname,
         String tagline,
+        String profileImageUrl,
         long subscriberCount,
         long releaseCount,
-        ReviewRating reviewRating,
+        double reviewRating,
         List<ReleaseResponse> releases,
         List<ShortformResponse> shortForms,
         String introduction,

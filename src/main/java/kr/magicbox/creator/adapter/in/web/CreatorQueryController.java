@@ -52,6 +52,7 @@ public class CreatorQueryController {
                 .creatorId(result.creatorId())
                 .nickname(result.nickname())
                 .tagline(result.tagline())
+                .profileImageUrl(result.profileImageUrl())
                 .subscriberCount(result.subscriberCount())
                 .releaseCount(result.releaseCount())
                 .reviewRating(result.reviewRating())
