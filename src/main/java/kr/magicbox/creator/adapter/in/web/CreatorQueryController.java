@@ -49,6 +49,7 @@ public class CreatorQueryController {
                 GetCreatorProfileQuery.of(Nickname.of(nickname), userId)
         );
         return ResponseEntity.ok(CreatorProfileResponse.builder()
+                .creatorId(result.creatorId())
                 .nickname(result.nickname())
                 .tagline(result.tagline())
                 .subscriberCount(result.subscriberCount())
