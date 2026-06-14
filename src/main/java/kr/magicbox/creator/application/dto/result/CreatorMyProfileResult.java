@@ -7,6 +7,7 @@ import java.util.List;
 
 @Builder
 public record CreatorMyProfileResult(
+        Long creatorId,
         Nickname nickname,
         String tagline,
         long subscriberCount,
