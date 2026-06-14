@@ -69,6 +69,7 @@ public class CreatorQueryController {
     ) {
         CreatorMyProfileResult result = getMyCreatorProfileUseCase.getMyCreatorProfile(GetMyCreatorProfileQuery.of(userId));
         return ResponseEntity.ok(CreatorMyProfileResponse.builder()
+                .creatorId(result.creatorId())
                 .nickname(result.nickname().value())
                 .tagline(result.tagline())
                 .subscriberCount(result.subscriberCount())
