@@ -11,6 +11,8 @@ service CreatorService {
       returns (IsCreatorOwnedByUserResponse);
   rpc GetCreatorIdByUserId(GetCreatorIdByUserIdRequest)
       returns (GetCreatorIdByUserIdResponse);
+  rpc GetCreatorNicknameByCreatorId(GetCreatorNicknameByCreatorIdRequest)
+      returns (GetCreatorNicknameByCreatorIdResponse);
 }
 
 message IsCreatorOwnedByUserRequest {
@@ -28,4 +30,12 @@ message GetCreatorIdByUserIdRequest {
 
 message GetCreatorIdByUserIdResponse {
   int64 creator_id = 1;
+}
+
+message GetCreatorNicknameByCreatorIdRequest {
+  int64 creator_id = 1;
+}
+
+message GetCreatorNicknameByCreatorIdResponse {
+  string nickname = 1;
 }
