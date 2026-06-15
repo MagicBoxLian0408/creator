@@ -4,6 +4,7 @@ import kr.magicbox.creator.application.dto.result.CreatorSearchResult;
 import kr.magicbox.creator.application.dto.query.GetAllCreatorsQuery;
 import kr.magicbox.creator.application.port.in.GetAllCreatorsUseCase;
 import kr.magicbox.creator.application.port.out.CreatorRepositoryPort;
+import kr.magicbox.creator.application.port.out.SubscribeQueryPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,13 +16,14 @@ import java.util.List;
 public class GetAllCreatorsService implements GetAllCreatorsUseCase {
 
     private final CreatorRepositoryPort creatorRepositoryPort;
+    private final SubscribeQueryPort subscribeQueryPort;
 
     @Transactional(readOnly = true)
     @Override
     public List<CreatorSearchResult> getAllCreators(GetAllCreatorsQuery query) {
         return creatorRepositoryPort.findAllByCursor(query.cursorId(), query.size())
                 .stream()
-                .map(CreatorSearchResult::from)
+                .map(creator -> CreatorSearchResult.from(creator, subscribeQueryPort.getSubscriberCount(creator.getId().value())))
                 .toList();
     }
 }

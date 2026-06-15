@@ -94,6 +94,7 @@ public class CreatorQueryController {
                                 .introduction(content.introduction())
                                 .profileImageUrl(content.profileImageUrl())
                                 .tagline(content.tagline())
+                                .subscriberCount(content.subscriberCount())
                                 .build()
                 )
                 .toList();

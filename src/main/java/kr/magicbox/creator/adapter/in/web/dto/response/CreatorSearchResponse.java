@@ -8,6 +8,7 @@ public record CreatorSearchResponse(
         String nickname,
         String introduction,
         String profileImageUrl,
-        String tagline
+        String tagline,
+        long subscriberCount
 ) {
 }
