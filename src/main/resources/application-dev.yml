@@ -47,7 +47,6 @@ spring:
         spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JacksonJsonDeserializer
         spring.json.trusted.packages: "kr.magicbox.creator.adapter.in.kafka.event"
         spring.json.type.mapping: user-withdrawn:kr.magicbox.creator.adapter.in.kafka.event.UserWithdrawnEvent,user-banned:kr.magicbox.creator.adapter.in.kafka.event.UserBannedEvent
-        spring.json.use.type.headers: false
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
