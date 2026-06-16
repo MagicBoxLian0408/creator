@@ -6,6 +6,7 @@ import kr.magicbox.creator.application.port.out.CreatorCertificationRepositoryPo
 import kr.magicbox.creator.application.port.out.CreatorOutboxRepositoryPort;
 import kr.magicbox.creator.application.port.out.CreatorRepositoryPort;
 import kr.magicbox.creator.application.port.out.UserNicknameQueryPort;
+import kr.magicbox.creator.application.port.out.UserProfileImageQueryPort;
 import kr.magicbox.creator.domain.aggregate.Creator;
 import kr.magicbox.creator.domain.aggregate.CreatorCertification;
 import kr.magicbox.creator.domain.event.CreatorCertificationApprovedEvent;
@@ -26,6 +27,7 @@ public class ReviewCreatorCertificationService implements ReviewCreatorCertifica
     private final CreatorRepositoryPort creatorRepositoryPort;
     private final CreatorOutboxRepositoryPort eventRepositoryPort;
     private final UserNicknameQueryPort userNicknameQueryPort;
+    private final UserProfileImageQueryPort userProfileImageQueryPort;
 
     @Transactional
     @Override
@@ -71,10 +73,12 @@ public class ReviewCreatorCertificationService implements ReviewCreatorCertifica
             throw new CreatorAlreadyExistsException();
         }
         String nickname = userNicknameQueryPort.getNickname(certification.getUserId());
+        String profileImageUrl = userProfileImageQueryPort.getProfileImageUrl(certification.getUserId());
 
         Creator creator = Creator.createBuilder()
                 .userId(certification.getUserId())
                 .nickname(Nickname.of(nickname))
+                .profileImageUrl(profileImageUrl)
                 .genres(certification.getRequest().genres())
                 .build();
 

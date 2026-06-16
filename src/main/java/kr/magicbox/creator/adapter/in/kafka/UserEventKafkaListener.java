@@ -2,9 +2,11 @@ package kr.magicbox.creator.adapter.in.kafka;
 
 import kr.magicbox.creator.adapter.in.kafka.annotation.Idempotent;
 import kr.magicbox.creator.adapter.in.kafka.event.UserBannedEvent;
+import kr.magicbox.creator.adapter.in.kafka.event.UserProfileUpdatedEvent;
 import kr.magicbox.creator.adapter.in.kafka.event.UserWithdrawnEvent;
 import kr.magicbox.creator.adapter.out.persistence.repository.CreatorInboxRepository;
 import kr.magicbox.creator.application.port.in.HandleUserBannedUseCase;
+import kr.magicbox.creator.application.port.in.HandleUserProfileUpdatedUseCase;
 import kr.magicbox.creator.application.port.in.HandleUserWithdrawnUseCase;
 import kr.magicbox.creator.global.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +25,7 @@ public class UserEventKafkaListener {
 
     private final HandleUserWithdrawnUseCase handleUserWithdrawnUseCase;
     private final HandleUserBannedUseCase handleUserBannedUseCase;
+    private final HandleUserProfileUpdatedUseCase handleUserProfileUpdatedUseCase;
     private final CreatorInboxRepository creatorInboxRepository;
 
     @Idempotent
@@ -41,10 +44,25 @@ public class UserEventKafkaListener {
         handleUserBannedUseCase.handleUserBanned(consumerRecord.value().userId());
     }
 
+    @Idempotent
+    @RetryableTopic(dltStrategy = DltStrategy.FAIL_ON_ERROR, dltTopicSuffix = "-dlt", exclude = {BusinessException.class})
+    @KafkaListener(topics = "outbox.event.user-profile-updated", groupId = "creator-service")
+    public void handleUserProfileUpdatedEvent(ConsumerRecord<String, UserProfileUpdatedEvent> consumerRecord) {
+        log.info("[Inbox] user-profile-updated 이벤트 수신. key={}", consumerRecord.key());
+        UserProfileUpdatedEvent event = consumerRecord.value();
+        handleUserProfileUpdatedUseCase.handleUserProfileUpdated(
+                event.userId(),
+                event.after().profileImageUrl()
+        );
+    }
+
     @DltHandler
     public void handleDlt(ConsumerRecord<String, ?> consumerRecord) {
         log.error("[Inbox] DLT 전환. topic={}, partition={}, offset={}", consumerRecord.topic(), consumerRecord.partition(), consumerRecord.offset());
         creatorInboxRepository.findByTopicAndPartitionAndOffset(consumerRecord.topic(), consumerRecord.partition(), consumerRecord.offset())
-                .ifPresent(inbox -> inbox.markDeadLettered());
+                .ifPresent(inbox -> {
+                    inbox.markDeadLettered();
+                    creatorInboxRepository.save(inbox);
+                });
     }
 }
