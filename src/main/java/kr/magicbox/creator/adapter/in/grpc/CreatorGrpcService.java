@@ -5,6 +5,7 @@ import io.grpc.stub.StreamObserver;
 import kr.magicbox.creator.application.dto.query.IsCreatorOwnedByUserQuery;
 import kr.magicbox.creator.application.port.in.GetCreatorIdByUserIdUseCase;
 import kr.magicbox.creator.application.port.in.GetCreatorNicknameByCreatorIdUseCase;
+import kr.magicbox.creator.application.port.in.GetCreatorProfileByCreatorIdUseCase;
 import kr.magicbox.creator.application.port.in.IsCreatorOwnedByUserUseCase;
 import kr.magicbox.creator.domain.exception.CreatorNotFoundException;
 import kr.magicbox.creator.domain.vo.CreatorId;
@@ -14,6 +15,8 @@ import kr.magicbox.creator.grpc.creator.GetCreatorIdByUserIdRequest;
 import kr.magicbox.creator.grpc.creator.GetCreatorIdByUserIdResponse;
 import kr.magicbox.creator.grpc.creator.GetCreatorNicknameByCreatorIdRequest;
 import kr.magicbox.creator.grpc.creator.GetCreatorNicknameByCreatorIdResponse;
+import kr.magicbox.creator.grpc.creator.GetCreatorProfileByCreatorIdRequest;
+import kr.magicbox.creator.grpc.creator.GetCreatorProfileByCreatorIdResponse;
 import kr.magicbox.creator.grpc.creator.IsCreatorOwnedByUserRequest;
 import kr.magicbox.creator.grpc.creator.IsCreatorOwnedByUserResponse;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +28,7 @@ public class CreatorGrpcService extends CreatorServiceGrpc.CreatorServiceImplBas
     private final IsCreatorOwnedByUserUseCase isCreatorOwnedByUserUseCase;
     private final GetCreatorIdByUserIdUseCase getCreatorIdByUserIdUseCase;
     private final GetCreatorNicknameByCreatorIdUseCase getCreatorNicknameByCreatorIdUseCase;
+    private final GetCreatorProfileByCreatorIdUseCase getCreatorProfileByCreatorIdUseCase;
 
     @Override
     public void isCreatorOwnedByUser(IsCreatorOwnedByUserRequest request,
@@ -69,6 +73,26 @@ public class CreatorGrpcService extends CreatorServiceGrpc.CreatorServiceImplBas
             );
             responseObserver.onNext(GetCreatorNicknameByCreatorIdResponse.newBuilder()
                     .setNickname(nickname)
+                    .build());
+            responseObserver.onCompleted();
+        } catch (CreatorNotFoundException e) {
+            responseObserver.onError(Status.NOT_FOUND
+                    .withDescription("Creator not found for creatorId: " + request.getCreatorId())
+                    .asRuntimeException());
+        }
+    }
+
+    @Override
+    public void getCreatorProfileByCreatorId(GetCreatorProfileByCreatorIdRequest request,
+                                             StreamObserver<GetCreatorProfileByCreatorIdResponse> responseObserver) {
+        try {
+            GetCreatorProfileByCreatorIdUseCase.CreatorProfile profile = getCreatorProfileByCreatorIdUseCase.getCreatorProfile(
+                    CreatorId.of(request.getCreatorId())
+            );
+            responseObserver.onNext(GetCreatorProfileByCreatorIdResponse.newBuilder()
+                    .setCreatorId(profile.creatorId())
+                    .setNickname(profile.nickname())
+                    .setProfileImageUrl(profile.profileImageUrl() != null ? profile.profileImageUrl() : "")
                     .build());
             responseObserver.onCompleted();
         } catch (CreatorNotFoundException e) {
