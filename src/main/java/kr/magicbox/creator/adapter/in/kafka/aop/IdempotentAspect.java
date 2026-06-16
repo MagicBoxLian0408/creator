@@ -84,6 +84,6 @@ public class IdempotentAspect {
                 .filter(ConsumerRecord.class::isInstance)
                 .map(arg -> (ConsumerRecord<String, ?>) arg)
                 .findFirst()
-                .orElseThrow(() -> new IllegalStateException("@Idempotent 메서드에 ConsumerRecord 파라미터가 없습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("@Idempotent 메서드에 ConsumerRecord 파라미터가 없습니다."));
     }
 }
