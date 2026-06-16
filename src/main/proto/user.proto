@@ -8,6 +8,7 @@ option java_multiple_files = true;
 
 service UserService {
   rpc GetUserNickname(GetUserNicknameRequest) returns (GetUserNicknameResponse);
+  rpc GetUserProfileImageUrl(GetUserProfileImageUrlRequest) returns (GetUserProfileImageUrlResponse);
 }
 
 message GetUserNicknameRequest {
@@ -16,4 +17,12 @@ message GetUserNicknameRequest {
 
 message GetUserNicknameResponse {
   string nickname = 1;
+}
+
+message GetUserProfileImageUrlRequest {
+  int64 user_id = 1;
+}
+
+message GetUserProfileImageUrlResponse {
+  string profile_image_url = 1;
 }
