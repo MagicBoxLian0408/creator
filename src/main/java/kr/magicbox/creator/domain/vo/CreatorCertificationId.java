@@ -1,8 +1,9 @@
 package kr.magicbox.creator.domain.vo;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import kr.magicbox.creator.domain.exception.InvalidFieldException;
 
-public record CreatorCertificationId(Long value) {
+public record CreatorCertificationId(@JsonValue Long value) {
 
     public CreatorCertificationId {
         if (value == null || value <= 0) {
