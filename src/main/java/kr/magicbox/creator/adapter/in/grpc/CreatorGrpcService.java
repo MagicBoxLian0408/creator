@@ -6,6 +6,7 @@ import kr.magicbox.creator.application.dto.query.IsCreatorOwnedByUserQuery;
 import kr.magicbox.creator.application.port.in.GetCreatorIdByUserIdUseCase;
 import kr.magicbox.creator.application.port.in.GetCreatorNicknameByCreatorIdUseCase;
 import kr.magicbox.creator.application.port.in.GetCreatorProfileByCreatorIdUseCase;
+import kr.magicbox.creator.application.port.in.GetCreatorProfilesBatchUseCase;
 import kr.magicbox.creator.application.port.in.IsCreatorOwnedByUserUseCase;
 import kr.magicbox.creator.domain.exception.CreatorNotFoundException;
 import kr.magicbox.creator.domain.vo.CreatorId;
@@ -17,10 +18,15 @@ import kr.magicbox.creator.grpc.creator.GetCreatorNicknameByCreatorIdRequest;
 import kr.magicbox.creator.grpc.creator.GetCreatorNicknameByCreatorIdResponse;
 import kr.magicbox.creator.grpc.creator.GetCreatorProfileByCreatorIdRequest;
 import kr.magicbox.creator.grpc.creator.GetCreatorProfileByCreatorIdResponse;
+import kr.magicbox.creator.grpc.creator.GetCreatorProfilesBatchRequest;
+import kr.magicbox.creator.grpc.creator.GetCreatorProfilesBatchResponse;
 import kr.magicbox.creator.grpc.creator.IsCreatorOwnedByUserRequest;
 import kr.magicbox.creator.grpc.creator.IsCreatorOwnedByUserResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.grpc.server.service.GrpcService;
+
+import java.util.List;
+import java.util.Map;
 
 @GrpcService
 @RequiredArgsConstructor
@@ -29,6 +35,7 @@ public class CreatorGrpcService extends CreatorServiceGrpc.CreatorServiceImplBas
     private final GetCreatorIdByUserIdUseCase getCreatorIdByUserIdUseCase;
     private final GetCreatorNicknameByCreatorIdUseCase getCreatorNicknameByCreatorIdUseCase;
     private final GetCreatorProfileByCreatorIdUseCase getCreatorProfileByCreatorIdUseCase;
+    private final GetCreatorProfilesBatchUseCase getCreatorProfilesBatchUseCase;
 
     @Override
     public void isCreatorOwnedByUser(IsCreatorOwnedByUserRequest request,
@@ -100,5 +107,28 @@ public class CreatorGrpcService extends CreatorServiceGrpc.CreatorServiceImplBas
                     .withDescription("Creator not found for creatorId: " + request.getCreatorId())
                     .asRuntimeException());
         }
+    }
+
+    @Override
+    public void getCreatorProfilesBatch(GetCreatorProfilesBatchRequest request,
+                                        StreamObserver<GetCreatorProfilesBatchResponse> responseObserver) {
+        List<CreatorId> creatorIds = request.getCreatorIdsList().stream()
+                .map(CreatorId::of)
+                .toList();
+        Map<Long, GetCreatorProfileByCreatorIdUseCase.CreatorProfile> profiles =
+                getCreatorProfilesBatchUseCase.getCreatorProfilesBatch(creatorIds);
+
+        List<GetCreatorProfileByCreatorIdResponse> responseProfiles = profiles.values().stream()
+                .map(p -> GetCreatorProfileByCreatorIdResponse.newBuilder()
+                        .setCreatorId(p.creatorId())
+                        .setNickname(p.nickname())
+                        .setProfileImageUrl(p.profileImageUrl() != null ? p.profileImageUrl() : "")
+                        .build())
+                .toList();
+
+        responseObserver.onNext(GetCreatorProfilesBatchResponse.newBuilder()
+                .addAllProfiles(responseProfiles)
+                .build());
+        responseObserver.onCompleted();
     }
 }

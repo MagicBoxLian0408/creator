@@ -15,6 +15,8 @@ service CreatorService {
       returns (GetCreatorNicknameByCreatorIdResponse);
   rpc GetCreatorProfileByCreatorId(GetCreatorProfileByCreatorIdRequest)
       returns (GetCreatorProfileByCreatorIdResponse);
+  rpc GetCreatorProfilesBatch(GetCreatorProfilesBatchRequest)
+      returns (GetCreatorProfilesBatchResponse);
 }
 
 message IsCreatorOwnedByUserRequest {
@@ -50,4 +52,12 @@ message GetCreatorProfileByCreatorIdResponse {
   int64 creator_id = 1;
   string nickname = 2;
   string profile_image_url = 3;
+}
+
+message GetCreatorProfilesBatchRequest {
+  repeated int64 creator_ids = 1;
+}
+
+message GetCreatorProfilesBatchResponse {
+  repeated GetCreatorProfileByCreatorIdResponse profiles = 1;
 }
