@@ -17,6 +17,7 @@ public record CreatorCertificationApprovedEvent(
         @JsonProperty("creator_id") CreatorId creatorId,
         @JsonProperty("certification_id") CreatorCertificationId certificationId,
         @JsonProperty("nickname") String nickname,
+        @JsonProperty("profile_image_url") String profileImageUrl,
         @JsonProperty("genres") Set<MagicGenre> genres,
         @JsonProperty("status") CreatorStatus status,
         @JsonProperty("occurred_at") Instant occurredAt
