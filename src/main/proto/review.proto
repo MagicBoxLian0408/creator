@@ -15,5 +15,5 @@ message GetReviewRatingRequest {
 }
 
 message GetReviewRatingResponse {
-  double rating = 1;
+  double average_rating = 1;
 }

@@ -35,7 +35,7 @@ public class ReviewQueryGrpcAdapter implements ReviewRatingQueryPort {
                 .withDeadlineAfter(2, TimeUnit.SECONDS);
         GetReviewRatingResponse response = stub.getReviewRating(request);
 
-        return ReviewRating.of(response.getRating());
+        return ReviewRating.of(response.getAverageRating());
     }
 
     @SuppressWarnings("unused")
