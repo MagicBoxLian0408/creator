@@ -34,7 +34,7 @@ public class GetMyCreatorProfileService implements GetMyCreatorProfileUseCase {
                 .tagline(creator.getTagline())
                 .subscriberCount(subscribeQueryPort.getSubscriberCount(creatorId))
                 .releaseCount(releaseQueryPort.getReleaseCount(creatorId))
-                .reviewRating(reviewRatingQueryPort.getReviewRating(creatorId))
+                .averageReviewRating(reviewRatingQueryPort.getReviewRating(creatorId).value())
                 .releases(releaseQueryPort.getReleases(creatorId))
                 .shortForms(shortformQueryPort.getShortforms(creatorId))
                 .introduction(creator.getIntroduction())
