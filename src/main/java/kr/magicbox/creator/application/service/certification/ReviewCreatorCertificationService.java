@@ -53,6 +53,7 @@ public class ReviewCreatorCertificationService implements ReviewCreatorCertifica
                 .creatorId(creator.getId())
                 .certificationId(certification.getId())
                 .nickname(creator.getNicknameValue())
+                .profileImageUrl(creator.getProfileImageUrl())
                 .genres(creator.getGenres())
                 .status(creator.getStatus())
                 .occurredAt(certification.getResult().reviewedAt())
