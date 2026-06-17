@@ -24,4 +24,7 @@ public interface CreatorJpaRepository extends JpaRepository<CreatorEntity, Long>
 
     @Query("SELECT COUNT(c) > 0 FROM CreatorEntity c WHERE c.userId = :userId")
     boolean existsByUserId(@Param("userId") Long userId);
+
+    @Query("SELECT c FROM CreatorEntity c WHERE c.id IN :ids")
+    List<CreatorEntity> findAllByIdIn(@Param("ids") List<Long> ids);
 }
