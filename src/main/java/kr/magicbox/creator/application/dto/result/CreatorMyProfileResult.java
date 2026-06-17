@@ -12,7 +12,7 @@ public record CreatorMyProfileResult(
         String tagline,
         long subscriberCount,
         long releaseCount,
-        ReviewRating reviewRating,
+        double averageReviewRating,
         List<ReleaseResult> releases,
         List<ShortformResult> shortForms,
         String introduction
