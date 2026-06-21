@@ -16,8 +16,8 @@ public class GetCreatorIdByUserIdService implements GetCreatorIdByUserIdUseCase 
 
     private final CreatorRepositoryPort creatorRepositoryPort;
 
-    @Transactional(readOnly = true)
     @Override
+    @Transactional(readOnly = true)
     public CreatorId getCreatorIdByUserId(UserId userId) {
         Creator creator = creatorRepositoryPort.findByUserId(userId)
                 .orElseThrow(CreatorNotFoundException::new);

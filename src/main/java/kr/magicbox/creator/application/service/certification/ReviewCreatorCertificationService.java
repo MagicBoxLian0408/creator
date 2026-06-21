@@ -29,8 +29,8 @@ public class ReviewCreatorCertificationService implements ReviewCreatorCertifica
     private final UserNicknameQueryPort userNicknameQueryPort;
     private final UserProfileImageQueryPort userProfileImageQueryPort;
 
-    @Transactional
     @Override
+    @Transactional
     public void reviewCreatorCertification(ReviewCreatorCertificationCommand command) {
         CreatorCertification certification = certificationRepositoryPort.findById(command.certificationId())
                 .orElseThrow(CreatorCertificationNotFoundException::new);

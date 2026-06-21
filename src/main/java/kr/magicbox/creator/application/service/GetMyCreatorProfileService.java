@@ -20,8 +20,8 @@ public class GetMyCreatorProfileService implements GetMyCreatorProfileUseCase {
     private final ShortformQueryPort shortformQueryPort;
     private final ReviewRatingQueryPort reviewRatingQueryPort;
 
-    @Transactional(readOnly = true)
     @Override
+    @Transactional(readOnly = true)
     public CreatorMyProfileResult getMyCreatorProfile(GetMyCreatorProfileQuery query) {
         Creator creator = creatorRepositoryPort.findByUserId(query.userId())
                 .orElseThrow(CreatorNotFoundException::new);
@@ -29,7 +29,6 @@ public class GetMyCreatorProfileService implements GetMyCreatorProfileUseCase {
         Long creatorId = creator.getId().value();
 
         return CreatorMyProfileResult.builder()
-                .creatorId(creatorId)
                 .nickname(creator.getNickname())
                 .tagline(creator.getTagline())
                 .subscriberCount(subscribeQueryPort.getSubscriberCount(creatorId))
