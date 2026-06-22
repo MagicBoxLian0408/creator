@@ -18,12 +18,12 @@ public class GetAllCreatorsService implements GetAllCreatorsUseCase {
     private final CreatorRepositoryPort creatorRepositoryPort;
     private final SubscribeQueryPort subscribeQueryPort;
 
-    @Transactional(readOnly = true)
     @Override
+    @Transactional(readOnly = true)
     public List<CreatorSearchResult> getAllCreators(GetAllCreatorsQuery query) {
         return creatorRepositoryPort.findAllByCursor(query.cursorId(), query.size())
                 .stream()
-                .map(creator -> CreatorSearchResult.from(creator, subscribeQueryPort.getSubscriberCount(creator.getId().value())))
+                .map(creator -> CreatorSearchResult.from(creator, subscribeQueryPort.getSubscriberCount(creator.getId().value()).join()))
                 .toList();
     }
 }

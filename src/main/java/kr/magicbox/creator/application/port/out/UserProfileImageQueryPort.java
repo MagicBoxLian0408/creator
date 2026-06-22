@@ -2,6 +2,9 @@ package kr.magicbox.creator.application.port.out;
 
 import kr.magicbox.creator.domain.vo.UserId;
 
+import java.util.concurrent.CompletableFuture;
+
 public interface UserProfileImageQueryPort {
-    String getProfileImageUrl(UserId userId);
+
+    CompletableFuture<String> getProfileImageUrl(UserId userId);
 }

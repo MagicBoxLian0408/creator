@@ -18,8 +18,8 @@ public class GetMyCreatorCertificationsService implements GetMyCreatorCertificat
 
     private final CreatorCertificationRepositoryPort creatorCertificationRepositoryPort;
 
-    @Transactional(readOnly = true)
     @Override
+    @Transactional(readOnly = true)
     public List<CreatorCertificationInfoResult> getMyCreatorCertifications(GetMyCreatorCertificationsQuery query) {
         return creatorCertificationRepositoryPort.findAllByUserIdByCursor(query.userId(), query.cursorId(), query.size())
                 .stream()

@@ -21,8 +21,8 @@ public class UpdateCreatorProfileService implements UpdateCreatorProfileUseCase 
     private final CreatorRepositoryPort creatorRepositoryPort;
     private final CreatorOutboxRepositoryPort creatorOutboxRepositoryPort;
 
-    @Transactional
     @Override
+    @Transactional
     public void updateCreatorProfile(UpdateCreatorProfileCommand command) {
         Creator creator = creatorRepositoryPort.findByUserId(command.userId())
                 .orElseThrow(CreatorNotFoundException::new);

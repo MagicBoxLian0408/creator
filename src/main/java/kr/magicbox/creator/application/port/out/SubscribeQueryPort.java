@@ -1,8 +1,10 @@
 package kr.magicbox.creator.application.port.out;
 
+import java.util.concurrent.CompletableFuture;
+
 public interface SubscribeQueryPort {
 
-    long getSubscriberCount(Long creatorId);
+    CompletableFuture<Long> getSubscriberCount(Long creatorId);
 
-    boolean isSubscribed(Long creatorId, Long userId);
+    CompletableFuture<Boolean> isSubscribed(Long creatorId, Long userId);
 }

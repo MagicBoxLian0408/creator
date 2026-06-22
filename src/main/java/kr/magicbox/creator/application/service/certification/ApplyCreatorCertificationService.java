@@ -17,8 +17,8 @@ public class ApplyCreatorCertificationService implements ApplyCreatorCertificati
 
     private final CreatorCertificationRepositoryPort certificationRepositoryPort;
 
-    @Transactional
     @Override
+    @Transactional
     public void applyCreatorCertification(ApplyCreatorCertificationCommand command) {
         if (certificationRepositoryPort.existsByUserIdAndStatus(command.userId(), CreatorCertificationStatus.PENDING)) {
             throw new CreatorCertificationPendingAlreadyExistsException();

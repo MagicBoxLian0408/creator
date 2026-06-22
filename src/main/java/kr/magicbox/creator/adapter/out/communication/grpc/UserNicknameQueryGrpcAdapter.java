@@ -1,45 +1,38 @@
 package kr.magicbox.creator.adapter.out.communication.grpc;
 
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
-import io.grpc.ManagedChannel;
-import kr.magicbox.creator.adapter.out.communication.ServiceHost;
+import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
 import kr.magicbox.creator.adapter.out.communication.grpc.exception.UserServiceUnavailableException;
 import kr.magicbox.creator.application.port.out.UserNicknameQueryPort;
 import kr.magicbox.creator.domain.vo.UserId;
 import kr.magicbox.creator.grpc.user.GetUserNicknameRequest;
-import kr.magicbox.creator.grpc.user.GetUserNicknameResponse;
 import kr.magicbox.creator.grpc.user.UserServiceGrpc;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.grpc.client.GrpcChannelFactory;
 import org.springframework.stereotype.Component;
 
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.CompletableFuture;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
-@Slf4j
 public class UserNicknameQueryGrpcAdapter implements UserNicknameQueryPort {
-    private final GrpcChannelFactory grpcChannelFactory;
+
+    private final UserServiceGrpc.UserServiceFutureStub userServiceFutureStub;
 
     @Override
     @CircuitBreaker(name = "userService", fallbackMethod = "getNicknameFallback")
-    public String getNickname(UserId userId) {
-        GetUserNicknameRequest request = GetUserNicknameRequest.newBuilder()
-                .setUserId(userId.value())
-                .build();
-
-        ManagedChannel channel = grpcChannelFactory.createChannel(ServiceHost.USER.getHostName());
-        UserServiceGrpc.UserServiceBlockingStub stub = UserServiceGrpc
-                .newBlockingStub(channel)
-                .withDeadlineAfter(2, TimeUnit.SECONDS);
-        GetUserNicknameResponse response = stub.getUserNickname(request);
-
-        return response.getNickname();
+    @TimeLimiter(name = "userService", fallbackMethod = "getNicknameFallback")
+    public CompletableFuture<String> getNickname(UserId userId) {
+        return GrpcFutures.toCompletable(
+                userServiceFutureStub.getUserNickname(
+                        GetUserNicknameRequest.newBuilder().setUserId(userId.value()).build()
+                )
+        ).thenApply(response -> response.getNickname());
     }
 
     @SuppressWarnings("unused")
-    private String getNicknameFallback(UserId userId, Throwable throwable) {
+    private CompletableFuture<String> getNicknameFallback(UserId userId, Throwable throwable) {
         log.warn("유저 서비스 연결 실패");
         throw new UserServiceUnavailableException(throwable);
     }

@@ -19,8 +19,8 @@ public class WithdrawCreatorService implements WithdrawCreatorUseCase {
     private final CreatorRepositoryPort creatorRepositoryPort;
     private final CreatorOutboxRepositoryPort eventRepositoryPort;
 
-    @Transactional
     @Override
+    @Transactional
     public void withdrawCreator(WithdrawCreatorCommand command) {
         Creator creator = creatorRepositoryPort.findByUserId(command.userId()).orElseThrow(CreatorNotFoundException::new);
         creator.delete();

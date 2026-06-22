@@ -14,8 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class IsCreatorOwnedByUserService implements IsCreatorOwnedByUserUseCase {
     private final CreatorRepositoryPort creatorRepositoryPort;
 
-    @Transactional(readOnly = true)
     @Override
+    @Transactional(readOnly = true)
     public boolean isOwnedByUser(IsCreatorOwnedByUserQuery query) {
         Creator creator = creatorRepositoryPort.findByCreatorId(query.creatorId())
                 .orElseThrow(CreatorNotFoundException::new);
