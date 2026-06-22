@@ -11,18 +11,16 @@ public record CreatorSearchResult(
         Nickname nickname,
         String introduction,
         String profileImageUrl,
-        String tagline,
-        long subscriberCount
+        String tagline
 ) {
 
-    public static CreatorSearchResult from(Creator creator, long subscriberCount) {
+    public static CreatorSearchResult from(Creator creator) {
         return CreatorSearchResult.builder()
                 .creatorId(creator.getId())
                 .nickname(creator.getNickname())
                 .introduction(creator.getIntroduction())
                 .profileImageUrl(creator.getProfileImageUrl())
                 .tagline(creator.getTagline())
-                .subscriberCount(subscriberCount)
                 .build();
     }
 }
