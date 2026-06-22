@@ -1,13 +1,11 @@
 package kr.magicbox.creator.adapter.out.communication.grpc;
 
-import com.google.common.util.concurrent.ListenableFuture;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
 import kr.magicbox.creator.adapter.out.communication.grpc.exception.ReviewServiceUnavailableException;
 import kr.magicbox.creator.application.dto.result.ReviewRating;
 import kr.magicbox.creator.application.port.out.ReviewRatingQueryPort;
 import kr.magicbox.creator.grpc.review.GetReviewRatingRequest;
-import kr.magicbox.creator.grpc.review.GetReviewRatingResponse;
 import kr.magicbox.creator.grpc.review.ReviewServiceGrpc;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,21 +24,11 @@ public class ReviewQueryGrpcAdapter implements ReviewRatingQueryPort {
     @CircuitBreaker(name = "reviewService", fallbackMethod = "getReviewRatingFallback")
     @TimeLimiter(name = "reviewService", fallbackMethod = "getReviewRatingFallback")
     public CompletableFuture<ReviewRating> getReviewRating(Long creatorId) {
-        GetReviewRatingRequest request = GetReviewRatingRequest.newBuilder()
-                .setCreatorId(creatorId)
-                .build();
-
-        ListenableFuture<GetReviewRatingResponse> future = reviewServiceFutureStub.getReviewRating(request);
-
-        CompletableFuture<ReviewRating> result = new CompletableFuture<>();
-        future.addListener(() -> {
-            try {
-                result.complete(ReviewRating.of(future.get().getRating()));
-            } catch (Exception e) {
-                result.completeExceptionally(e);
-            }
-        }, Runnable::run);
-        return result;
+        return GrpcFutures.toCompletable(
+                reviewServiceFutureStub.getReviewRating(
+                        GetReviewRatingRequest.newBuilder().setCreatorId(creatorId).build()
+                )
+        ).thenApply(response -> ReviewRating.of(response.getRating()));
     }
 
     @SuppressWarnings("unused")
