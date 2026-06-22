@@ -73,8 +73,8 @@ public class ReviewCreatorCertificationService implements ReviewCreatorCertifica
         if (creatorRepositoryPort.existsByUserId(certification.getUserId())) {
             throw new CreatorAlreadyExistsException();
         }
-        String nickname = userNicknameQueryPort.getNickname(certification.getUserId());
-        String profileImageUrl = userProfileImageQueryPort.getProfileImageUrl(certification.getUserId());
+        String nickname = userNicknameQueryPort.getNickname(certification.getUserId()).join();
+        String profileImageUrl = userProfileImageQueryPort.getProfileImageUrl(certification.getUserId()).join();
 
         Creator creator = Creator.createBuilder()
                 .userId(certification.getUserId())

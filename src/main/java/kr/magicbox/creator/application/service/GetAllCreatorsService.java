@@ -23,7 +23,7 @@ public class GetAllCreatorsService implements GetAllCreatorsUseCase {
     public List<CreatorSearchResult> getAllCreators(GetAllCreatorsQuery query) {
         return creatorRepositoryPort.findAllByCursor(query.cursorId(), query.size())
                 .stream()
-                .map(creator -> CreatorSearchResult.from(creator, subscribeQueryPort.getSubscriberCount(creator.getId().value())))
+                .map(creator -> CreatorSearchResult.from(creator, subscribeQueryPort.getSubscriberCount(creator.getId().value()).join()))
                 .toList();
     }
 }

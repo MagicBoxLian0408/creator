@@ -1,8 +1,8 @@
 package kr.magicbox.creator.adapter.out.communication.grpc;
 
+import com.google.common.util.concurrent.ListenableFuture;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
-import io.grpc.ManagedChannel;
-import kr.magicbox.creator.adapter.out.communication.ServiceHost;
+import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
 import kr.magicbox.creator.adapter.out.communication.grpc.exception.UserServiceUnavailableException;
 import kr.magicbox.creator.application.port.out.UserProfileImageQueryPort;
 import kr.magicbox.creator.domain.vo.UserId;
@@ -11,35 +11,40 @@ import kr.magicbox.creator.grpc.user.GetUserProfileImageUrlResponse;
 import kr.magicbox.creator.grpc.user.UserServiceGrpc;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.grpc.client.GrpcChannelFactory;
 import org.springframework.stereotype.Component;
 
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.CompletableFuture;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
-@Slf4j
 public class UserProfileImageQueryGrpcAdapter implements UserProfileImageQueryPort {
-    private final GrpcChannelFactory grpcChannelFactory;
+
+    private final UserServiceGrpc.UserServiceFutureStub userServiceFutureStub;
 
     @Override
     @CircuitBreaker(name = "userService", fallbackMethod = "getProfileImageUrlFallback")
-    public String getProfileImageUrl(UserId userId) {
+    @TimeLimiter(name = "userService", fallbackMethod = "getProfileImageUrlFallback")
+    public CompletableFuture<String> getProfileImageUrl(UserId userId) {
         GetUserProfileImageUrlRequest request = GetUserProfileImageUrlRequest.newBuilder()
                 .setUserId(userId.value())
                 .build();
 
-        ManagedChannel channel = grpcChannelFactory.createChannel(ServiceHost.USER.getHostName());
-        UserServiceGrpc.UserServiceBlockingStub stub = UserServiceGrpc
-                .newBlockingStub(channel)
-                .withDeadlineAfter(2, TimeUnit.SECONDS);
-        GetUserProfileImageUrlResponse response = stub.getUserProfileImageUrl(request);
+        ListenableFuture<GetUserProfileImageUrlResponse> future = userServiceFutureStub.getUserProfileImageUrl(request);
 
-        return response.getProfileImageUrl();
+        CompletableFuture<String> result = new CompletableFuture<>();
+        future.addListener(() -> {
+            try {
+                result.complete(future.get().getProfileImageUrl());
+            } catch (Exception e) {
+                result.completeExceptionally(e);
+            }
+        }, Runnable::run);
+        return result;
     }
 
     @SuppressWarnings("unused")
-    private String getProfileImageUrlFallback(UserId userId, Throwable throwable) {
+    private CompletableFuture<String> getProfileImageUrlFallback(UserId userId, Throwable throwable) {
         log.warn("유저 서비스 연결 실패");
         throw new UserServiceUnavailableException(throwable);
     }
