@@ -3,10 +3,11 @@ package kr.magicbox.creator.application.port.out;
 import kr.magicbox.creator.application.dto.result.ReleaseResult;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public interface ReleaseQueryPort {
 
-    long getReleaseCount(Long creatorId);
+    CompletableFuture<Long> getReleaseCount(Long creatorId);
 
-    List<ReleaseResult> getReleases(Long creatorId);
+    CompletableFuture<List<ReleaseResult>> getReleases(Long creatorId);
 }

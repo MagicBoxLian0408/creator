@@ -4,7 +4,7 @@ import kr.magicbox.creator.domain.vo.UserId;
 
 import java.util.concurrent.CompletableFuture;
 
-public interface UserNicknameQueryPort {
+public interface UserProfileImageQueryPort {
 
-    CompletableFuture<String> getNickname(UserId userId);
+    CompletableFuture<String> getProfileImageUrl(UserId userId);
 }

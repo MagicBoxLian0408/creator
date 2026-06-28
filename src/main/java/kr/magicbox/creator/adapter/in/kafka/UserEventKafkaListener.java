@@ -46,5 +46,4 @@ public class UserEventKafkaListener {
         creatorInboxRepository.findByTopicAndPartitionAndOffset(consumerRecord.topic(), consumerRecord.partition(), consumerRecord.offset())
                 .ifPresent(CreatorInboxEntity::markDeadLettered);
     }
-
 }

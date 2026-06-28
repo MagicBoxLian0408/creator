@@ -26,4 +26,6 @@ public interface CreatorRepositoryPort {
     List<Creator> findAllByCursor(Long cursorId, int size);
 
     List<Creator> searchByNickname(String keyword, Long cursorId, int size);
+
+    List<Creator> findAllByIds(List<Long> ids);
 }

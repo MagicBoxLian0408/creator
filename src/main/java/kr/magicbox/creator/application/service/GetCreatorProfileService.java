@@ -21,8 +21,8 @@ public class GetCreatorProfileService implements GetCreatorProfileUseCase {
     private final ShortformQueryPort shortformQueryPort;
     private final ReviewRatingQueryPort reviewRatingQueryPort;
 
-    @Transactional(readOnly = true)
     @Override
+    @Transactional(readOnly = true)
     public CreatorPublicProfileResult getCreatorProfile(GetCreatorProfileQuery query) {
         UserId userId = query.userId();
         Creator creator = creatorRepositoryPort.findByNickname(query.nickname())
@@ -35,13 +35,13 @@ public class GetCreatorProfileService implements GetCreatorProfileUseCase {
                 .nickname(creator.getNicknameValue())
                 .tagline(creator.getTagline())
                 .profileImageUrl(creator.getProfileImageUrl())
-                .subscriberCount(subscribeQueryPort.getSubscriberCount(creatorId))
-                .releaseCount(releaseQueryPort.getReleaseCount(creatorId))
-                .reviewRating(reviewRatingQueryPort.getReviewRating(creatorId).value())
-                .releases(releaseQueryPort.getReleases(creatorId))
-                .shortForms(shortformQueryPort.getShortforms(creatorId))
+                .subscriberCount(subscribeQueryPort.getSubscriberCount(creatorId).join())
+                .releaseCount(releaseQueryPort.getReleaseCount(creatorId).join())
+                .averageReviewRating(reviewRatingQueryPort.getReviewRating(creatorId).join().value())
+                .releases(releaseQueryPort.getReleases(creatorId).join())
+                .shortForms(shortformQueryPort.getShortforms(creatorId).join())
                 .introduction(creator.getIntroduction())
-                .isSubscribed(userId != null && subscribeQueryPort.isSubscribed(creatorId, userId.value()))
+                .isSubscribed(userId != null && subscribeQueryPort.isSubscribed(creatorId, userId.value()).join())
                 .build();
     }
 }

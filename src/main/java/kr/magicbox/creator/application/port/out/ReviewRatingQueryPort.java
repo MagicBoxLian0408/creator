@@ -2,7 +2,9 @@ package kr.magicbox.creator.application.port.out;
 
 import kr.magicbox.creator.application.dto.result.ReviewRating;
 
+import java.util.concurrent.CompletableFuture;
+
 public interface ReviewRatingQueryPort {
 
-    ReviewRating getReviewRating(Long creatorId);
+    CompletableFuture<ReviewRating> getReviewRating(Long creatorId);
 }

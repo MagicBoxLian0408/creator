@@ -6,6 +6,7 @@ import kr.magicbox.creator.application.port.out.CreatorCertificationRepositoryPo
 import kr.magicbox.creator.application.port.out.CreatorOutboxRepositoryPort;
 import kr.magicbox.creator.application.port.out.CreatorRepositoryPort;
 import kr.magicbox.creator.application.port.out.UserNicknameQueryPort;
+import kr.magicbox.creator.application.port.out.UserProfileImageQueryPort;
 import kr.magicbox.creator.domain.aggregate.Creator;
 import kr.magicbox.creator.domain.aggregate.CreatorCertification;
 import kr.magicbox.creator.domain.event.CreatorCertificationApprovedEvent;
@@ -26,9 +27,10 @@ public class ReviewCreatorCertificationService implements ReviewCreatorCertifica
     private final CreatorRepositoryPort creatorRepositoryPort;
     private final CreatorOutboxRepositoryPort eventRepositoryPort;
     private final UserNicknameQueryPort userNicknameQueryPort;
+    private final UserProfileImageQueryPort userProfileImageQueryPort;
 
-    @Transactional
     @Override
+    @Transactional
     public void reviewCreatorCertification(ReviewCreatorCertificationCommand command) {
         CreatorCertification certification = certificationRepositoryPort.findById(command.certificationId())
                 .orElseThrow(CreatorCertificationNotFoundException::new);
@@ -51,6 +53,7 @@ public class ReviewCreatorCertificationService implements ReviewCreatorCertifica
                 .creatorId(creator.getId())
                 .certificationId(certification.getId())
                 .nickname(creator.getNicknameValue())
+                .profileImageUrl(creator.getProfileImageUrl())
                 .genres(creator.getGenres())
                 .status(creator.getStatus())
                 .occurredAt(certification.getResult().reviewedAt())
@@ -70,11 +73,13 @@ public class ReviewCreatorCertificationService implements ReviewCreatorCertifica
         if (creatorRepositoryPort.existsByUserId(certification.getUserId())) {
             throw new CreatorAlreadyExistsException();
         }
-        String nickname = userNicknameQueryPort.getNickname(certification.getUserId());
+        String nickname = userNicknameQueryPort.getNickname(certification.getUserId()).join();
+        String profileImageUrl = userProfileImageQueryPort.getProfileImageUrl(certification.getUserId()).join();
 
         Creator creator = Creator.createBuilder()
                 .userId(certification.getUserId())
                 .nickname(Nickname.of(nickname))
+                .profileImageUrl(profileImageUrl)
                 .genres(certification.getRequest().genres())
                 .build();
 

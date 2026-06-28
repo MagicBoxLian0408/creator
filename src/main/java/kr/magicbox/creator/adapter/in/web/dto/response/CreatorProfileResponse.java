@@ -12,7 +12,7 @@ public record CreatorProfileResponse(
         String profileImageUrl,
         long subscriberCount,
         long releaseCount,
-        double reviewRating,
+        double averageReviewRating,
         List<ReleaseResponse> releases,
         List<ShortformResponse> shortForms,
         String introduction,

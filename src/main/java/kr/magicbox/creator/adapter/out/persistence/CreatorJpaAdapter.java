@@ -82,4 +82,12 @@ public class CreatorJpaAdapter implements CreatorRepositoryPort {
                 .map(creatorMapper::toDomain)
                 .toList();
     }
+
+    @Override
+    public List<Creator> findAllByIds(List<Long> ids) {
+        return creatorJpaRepository.findAllByIdIn(ids)
+                .stream()
+                .map(creatorMapper::toDomain)
+                .toList();
+    }
 }

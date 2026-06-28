@@ -1,45 +1,38 @@
 package kr.magicbox.creator.adapter.out.communication.grpc;
 
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
-import io.grpc.ManagedChannel;
-import kr.magicbox.creator.adapter.out.communication.ServiceHost;
+import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
 import kr.magicbox.creator.adapter.out.communication.grpc.exception.ReviewServiceUnavailableException;
 import kr.magicbox.creator.application.dto.result.ReviewRating;
 import kr.magicbox.creator.application.port.out.ReviewRatingQueryPort;
 import kr.magicbox.creator.grpc.review.GetReviewRatingRequest;
-import kr.magicbox.creator.grpc.review.GetReviewRatingResponse;
 import kr.magicbox.creator.grpc.review.ReviewServiceGrpc;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.grpc.client.GrpcChannelFactory;
 import org.springframework.stereotype.Component;
 
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.CompletableFuture;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
-@Slf4j
 public class ReviewQueryGrpcAdapter implements ReviewRatingQueryPort {
-    private final GrpcChannelFactory grpcChannelFactory;
+
+    private final ReviewServiceGrpc.ReviewServiceFutureStub reviewServiceFutureStub;
 
     @Override
     @CircuitBreaker(name = "reviewService", fallbackMethod = "getReviewRatingFallback")
-    public ReviewRating getReviewRating(Long creatorId) {
-        GetReviewRatingRequest request = GetReviewRatingRequest.newBuilder()
-                .setCreatorId(creatorId)
-                .build();
-
-        ManagedChannel channel = grpcChannelFactory.createChannel(ServiceHost.REVIEW.getHostName());
-        ReviewServiceGrpc.ReviewServiceBlockingStub stub = ReviewServiceGrpc
-                .newBlockingStub(channel)
-                .withDeadlineAfter(2, TimeUnit.SECONDS);
-        GetReviewRatingResponse response = stub.getReviewRating(request);
-
-        return ReviewRating.of(response.getRating());
+    @TimeLimiter(name = "reviewService", fallbackMethod = "getReviewRatingFallback")
+    public CompletableFuture<ReviewRating> getReviewRating(Long creatorId) {
+        return GrpcFutures.toCompletable(
+                reviewServiceFutureStub.getReviewRating(
+                        GetReviewRatingRequest.newBuilder().setCreatorId(creatorId).build()
+                )
+        ).thenApply(response -> ReviewRating.of(response.getRating()));
     }
 
     @SuppressWarnings("unused")
-    private ReviewRating getReviewRatingFallback(Long creatorId, Throwable throwable) {
+    private CompletableFuture<ReviewRating> getReviewRatingFallback(Long creatorId, Throwable throwable) {
         log.warn("리뷰 서비스 연결 실패");
         throw new ReviewServiceUnavailableException(throwable);
     }
